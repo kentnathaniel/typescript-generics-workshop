@@ -1,103 +1,103 @@
-import { expect, it } from 'vitest'
-import { Equal, Expect } from '../helpers/type-utils'
+import { expect, it } from "vitest";
+import { Equal, Expect } from "../helpers/type-utils";
 
 const makeSafe =
-  <TArgs extends Array<any>, TResult>(func: (...args: TArgs) => TResult) =>
+  (func: unknown) =>
   (
-    ...args: TArgs
+    ...args: unknown
   ):
     | {
-        type: 'success'
-        result: TResult
+        type: "success";
+        result: unknown;
       }
     | {
-        type: 'failure'
-        error: Error
+        type: "failure";
+        error: Error;
       } => {
     try {
-      const result = func(...args)
+      const result = func(...args);
 
       return {
-        type: 'success',
+        type: "success",
         result,
-      }
+      };
     } catch (e) {
       return {
-        type: 'failure',
+        type: "failure",
         error: e as Error,
-      }
+      };
     }
-  }
+  };
 
 it("Should return the result with a { type: 'success' } on a successful call", () => {
-  const func = makeSafe(() => 1)
+  const func = makeSafe(() => 1);
 
-  const result = func()
+  const result = func();
 
   expect(result).toEqual({
-    type: 'success',
+    type: "success",
     result: 1,
-  })
+  });
 
   type tests = [
     Expect<
       Equal<
         typeof result,
         | {
-            type: 'success'
-            result: number
+            type: "success";
+            result: number;
           }
         | {
-            type: 'failure'
-            error: Error
+            type: "failure";
+            error: Error;
           }
       >
-    >
-  ]
-})
+    >,
+  ];
+});
 
-it('Should return the error on a thrown call', () => {
+it("Should return the error on a thrown call", () => {
   const func = makeSafe(() => {
     if (1 > 2) {
-      return '123'
+      return "123";
     }
-    throw new Error('Oh dear')
-  })
+    throw new Error("Oh dear");
+  });
 
-  const result = func()
+  const result = func();
 
   expect(result).toEqual({
-    type: 'failure',
-    error: new Error('Oh dear'),
-  })
+    type: "failure",
+    error: new Error("Oh dear"),
+  });
 
   type tests = [
     Expect<
       Equal<
         typeof result,
         | {
-            type: 'success'
-            result: string
+            type: "success";
+            result: string;
           }
         | {
-            type: 'failure'
-            error: Error
+            type: "failure";
+            error: Error;
           }
       >
-    >
-  ]
-})
+    >,
+  ];
+});
 
 it("Should properly match the function's arguments", () => {
   const func = makeSafe((a: number, b: string) => {
-    return `${a} ${b}`
-  })
+    return `${a} ${b}`;
+  });
 
   // @ts-expect-error
-  func()
+  func();
 
   // @ts-expect-error
-  func(1, 1)
+  func(1, 1);
 
-  func(1, '1')
-})
+  func(1, "1");
+});

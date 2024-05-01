@@ -1,26 +1,29 @@
-import { expect, it } from "vitest";
-import { Equal, Expect } from "../helpers/type-utils";
+import { expect, it } from 'vitest'
+import { Equal, Expect } from '../helpers/type-utils'
 
 /**
  * This time, let's try and solve this one
  * with function overloads too!
  */
-export const youSayGoodbyeISayHello = (greeting: "goodbye" | "hello") => {
-  return greeting === "goodbye" ? "hello" : "goodbye";
-};
 
-it("Should return goodbye when hello is passed in", () => {
-  const result = youSayGoodbyeISayHello("hello");
+function youSayGoodbyeISayHello(greeting: 'hello'): 'goodbye'
+function youSayGoodbyeISayHello(greeting: 'goodbye'): 'hello'
+function youSayGoodbyeISayHello(greeting: 'goodbye' | 'hello') {
+  return greeting === 'goodbye' ? 'hello' : 'goodbye'
+}
 
-  type test = [Expect<Equal<typeof result, "goodbye">>];
+it('Should return goodbye when hello is passed in', () => {
+  const result = youSayGoodbyeISayHello('hello')
 
-  expect(result).toEqual("goodbye");
-});
+  type test = [Expect<Equal<typeof result, 'goodbye'>>]
 
-it("Should return hello when goodbye is passed in", () => {
-  const result = youSayGoodbyeISayHello("goodbye");
+  expect(result).toEqual('goodbye')
+})
 
-  type test = [Expect<Equal<typeof result, "hello">>];
+it('Should return hello when goodbye is passed in', () => {
+  const result = youSayGoodbyeISayHello('goodbye')
 
-  expect(result).toEqual("hello");
-});
+  type test = [Expect<Equal<typeof result, 'hello'>>]
+
+  expect(result).toEqual('hello')
+})
